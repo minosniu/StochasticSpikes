@@ -2,20 +2,14 @@
 #define PROBCON_H
 
 #define SHOW_POTENTIAL
-	
-	
 #define SIMULATION_ONLY
 
 #define MAX_FORCE 1.0
 #define MAX_FORCE_X 1.0
 
-
-//#define FILT_LEN 6//8
 #define FILT_LEN 2
 #define FILT_DIF 6
 
-//#define FILT_LEN 6
-//#define FILT_DIF 10
 #define cost_sc 16
 
 #define SC	1
@@ -33,26 +27,11 @@ struct tm * timeinfo;
 
 int mainWindow, subWindow1,subWindow2;
 
-//int i,j;
-//double di,dj;
-
 /// ROBOT CODE DECLARATIONS
 int kill;
-//Engine *ep;
-//mxArray *mt;
-//mxArray *mtp;
-//mxArray *mGx;
-//mxArray *mGy;
-//mxArray *mdiffx;
-//mxArray *mdiffy;
-//double *diffx;
-//double *diffy;
 double cdiffx;
 double cdiffy;
-//double tim;
 double tp;
-//double Gx;
-//double Gy;
 double *pt;
 double *ptp;
 double *pGx;
@@ -61,38 +40,17 @@ bool b3DPositionServo=false;
 bool bMatlabLoopOn=false;
 bool bPlotLoopOn=false;
 bool bZOnlyControl=false;
-//double viscX=0.0002;//0.178;
 double visc=.0036;//0.0028;//0.0051;//0.0028;//0.0032
-//double scale=.369;//0.459;//0.3;//0.259;
-//double scale=.469;
 double scale=.689;
-//double scaleY=0.158;
-//double scaleY=0.1058;
 double divis;
 double stiff;
 
 unsigned char keys[256];
 
-//hduVector3Dd global_position;
-//hduVector3Dd global_force;
-//hduVector3Dd global_joint_angles;
-//hduVector3Dd global_joint_torque;
-
-//hduVector3Dd inforce;		//???
-//hduVector3Dd velocity;	//???
-
 double velSmoothX[FILT_LEN];
 double velSmoothY[FILT_LEN];
 double velMeanX=0.0;
 double velMeanY=0.0;
-
-#ifndef SIMULATION_ONLY
-HDErrorInfo error;
-HDSchedulerHandle hGravityWell;
-HHD hHD;
-HDCallbackCode HDCALLBACK gravityWellCallback(void *data);
-#endif
-//hduVector3Dd wellPos2;
 
 int c; 
 
@@ -174,32 +132,17 @@ int iy=0;
 double points[2*NCX];  //= linspace(0.0, 1.0, NCX);
 double Vdiff[2*NCX];
 double L1[NCX][NCY];
-
-//double L3[NCX][NCX];
-#ifndef USE_CAMERA
 double vpoints[NCX]; 
 double vV[NCX];
 double Vfn0[NCX][NCY];
 double vC[NCX];
 double Cfn0[NCX][NCY];
-#endif
+
+
 double difSmoothX[FILT_DIF];
 double difSmoothY[FILT_DIF];
 double difMeanX=0.0;
 double difMeanY=0.0;
-
-
-// Measurement Computing Variables
-int ch;
-int Row, Col;
-int BoardNum = 0;
-int ULStat = 0;
-int Gain = BIP10VOLTS;
-int Options = DEFAULTOPTION;
-float DataValue[2];
-int UDStat = 0;
-float min, max;
-float RevLevel;
 
 // FUNCTION PROTOTYPES
 int InitProbCon(void);
@@ -452,7 +395,7 @@ void MtrxProduct(double *pM1,double *pM2,int m,int n,int p,double *pM3)
 //	free(pM2T);
 //}
 
-SYSTEMTIME st;
+//SYSTEMTIME st;
 
 void LogicLoop()
 {
@@ -470,7 +413,7 @@ void LogicLoop()
 		//printf("\n\nGx = %lf\tGy = %lf\tdifx = %lf  \tdify = %lf", Gx, Gy, cdiffx, cdiffy);
 		//printf("\n\ndifx = %lf  \tdify = %lf \tcdiffx = %lf\tcdiffy = %lf", Gx, Gy, cdiffx, cdiffy);
 
-		GetSystemTime(&st);
+		//GetSystemTime(&st);
 		
 //		printf ( "\n\nCurrent seconds %u and milliseconds %time and date: %u", st.wSecond, st.wMilliseconds);
 
@@ -514,44 +457,44 @@ void init(void)
 void processNormalKeys(unsigned char key, int x, int y)
 {
 
-	if (key == VK_ESCAPE)
-	{
-		kill = 1;
-		printf("\n11");
-		Sleep(200);
-		freeAllMem();
-		printf("\n12");
+	//if (key == VK_ESCAPE)
+	//{
+	//	kill = 1;
+	//	printf("\n11");
+	//	Sleep(200);
+	//	freeAllMem();
+	//	printf("\n12");
 
-		exit(0);
-	}
-	else
-	{
-		/*if ( key == 'q' )
-		{
-			kill = 1;
-		}
-		else*/ if ( key =='z' )			//Z control
-		{
-			bZOnlyControl = true;
-		}
-		else if ( key == 'm' )
-		{
-			bMatlabLoopOn = true;
-		}
-		else if ( key == 'r' )
-		{
-			if ( recording == 0) 
-			{
-				printf("Data recording ON\n");
-				recording = 1;
-			}
-			else
-			{
-				printf("Data recording OFF\n");
-				recording = 0;
-			}
-		}
-	}
+	//	exit(0);
+	//}
+	//else
+	//{
+	//	/*if ( key == 'q' )
+	//	{
+	//		kill = 1;
+	//	}
+	//	else*/ if ( key =='z' )			//Z control
+	//	{
+	//		bZOnlyControl = true;
+	//	}
+	//	else if ( key == 'm' )
+	//	{
+	//		bMatlabLoopOn = true;
+	//	}
+	//	else if ( key == 'r' )
+	//	{
+	//		if ( recording == 0) 
+	//		{
+	//			printf("Data recording ON\n");
+	//			recording = 1;
+	//		}
+	//		else
+	//		{
+	//			printf("Data recording OFF\n");
+	//			recording = 0;
+	//		}
+	//	}
+	//}
 }
 
 void freeAllMem()
@@ -591,29 +534,10 @@ void freeAllMem()
 #endif
 }
 
-void MCInit()
-{
-	RevLevel = (float)CURRENTREVNUM;
-	
-	ULStat = cbDeclareRevision(&RevLevel);
-	cbErrHandling (PRINTALL, DONTSTOP);
-
-	//Chan[0] = 0;
-	//Chan[1] = 0;
-
-	Gain = BIP10VOLTS;
-	min=-10.0;
-	max=10.0;
-	
-	UDStat = NOERRORS;
-
-	DataValue[0] = 1.6f;
-	DataValue[1] = 3.3f;
-}
 
 int InitProbCon()   
 {
-	MCInit();
+	//MCInit();
 
 
 	int i_IPC,j_IPC;
@@ -770,8 +694,9 @@ int InitProbCon()
 		}
 	}
 
+	//+++ Clear mem
 
-	ZeroMemory(sp_state[0],NCX*NCY*sizeof(double)); 
+	//ZeroMemory(sp_state[0],NCX*NCY*sizeof(double)); 
 
 	xglob = 0.5;
 	yglob = 0.5;
@@ -1267,16 +1192,16 @@ void ProbConLoop_C()
 
 	if(xglob > 0.01f && xglob < 1.0f )
 	{
-		DataValue[0] = xglob * 3.3f;
+		//DataValue[0] = xglob * 3.3f;
 	}
-	DataValue[1] = 3.3f;
-	
-	if(DataValue[0] > 0.01f && DataValue[0] < 3.3f)
-	{
-		ULStat = cbVOut (BoardNum, 0, Gain, DataValue[0], Options);
-	}
+	//DataValue[1] = 3.3f;
+	//
+	////if(DataValue[0] > 0.01f && DataValue[0] < 3.3f)
+	////{
+	//	ULStat = cbVOut (BoardNum, 0, Gain, DataValue[0], Options);
+	//}
 
-	ULStat = cbVOut (BoardNum, 1, Gain, DataValue[1], Options);
+	//ULStat = cbVOut (BoardNum, 1, Gain, DataValue[1], Options);
 
 }
 
