@@ -458,43 +458,42 @@ void processNormalKeys(unsigned char key, int x, int y)
 {
 
 	//if (key == VK_ESCAPE)
-	//{
-	//	kill = 1;
-	//	printf("\n11");
-	//	Sleep(200);
-	//	freeAllMem();
-	//	printf("\n12");
+	if (key == 27)
+	{
+		kill = 1;
+		printf("\n11");
+		//Sleep(200);
+		freeAllMem();
+		printf("\n12");
 
-	//	exit(0);
-	//}
-	//else
-	//{
-	//	/*if ( key == 'q' )
-	//	{
-	//		kill = 1;
-	//	}
-	//	else*/ if ( key =='z' )			//Z control
-	//	{
-	//		bZOnlyControl = true;
-	//	}
-	//	else if ( key == 'm' )
-	//	{
-	//		bMatlabLoopOn = true;
-	//	}
-	//	else if ( key == 'r' )
-	//	{
-	//		if ( recording == 0) 
-	//		{
-	//			printf("Data recording ON\n");
-	//			recording = 1;
-	//		}
-	//		else
-	//		{
-	//			printf("Data recording OFF\n");
-	//			recording = 0;
-	//		}
-	//	}
-	//}
+		exit(0);
+	}
+	else
+	{
+		if ( key == 'p') {
+			b3DPositionServo = true;
+		}
+		else if ( key =='z' ) {
+			bZOnlyControl = true;
+		}
+		else if ( key == 'm' )
+		{
+			bMatlabLoopOn = true;
+		}
+		else if ( key == 'r' )
+		{
+			if ( recording == 0) 
+			{
+				printf("Data recording ON\n");
+				recording = 1;
+			}
+			else
+			{
+				printf("Data recording OFF\n");
+				recording = 0;
+			}
+		}
+	}
 }
 
 void freeAllMem()
