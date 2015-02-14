@@ -383,42 +383,31 @@ void exitProgVK()
 
 void MainLoop()
 {
-//	if(GetAsyncKeyState(VK_ESCAPE))
-//	{
-//		exitProgVK();
-//	}
-	//else
+	glClear (GL_COLOR_BUFFER_BIT);
+
+	glColor3f (1.0, 1.0, 1.0);
+
+	glColor3f (0.2, 0.2, 0.2);
+	drawGrid();
+	glColor3f (1.0, 1.0, 1.0);
+
+	LogicLoop();
+
+	//glColor3f (0.0, 0.8, 0.0);
+	//drawCircle((Gx/100+0.5)*NCX,(Gy/100+0.5)*NCY);
+
+	frame++;
+	timeget=glutGet(GLUT_ELAPSED_TIME);
+	if(timeget-timebase>1000)
 	{
-		//if(GetAsyncKeyState('P'))
-		//{
-		//	b3DPositionServo = true;
-		//}
-		glClear (GL_COLOR_BUFFER_BIT);
-    
-		glColor3f (1.0, 1.0, 1.0);
-	
-		glColor3f (0.2, 0.2, 0.2);
-		drawGrid();
-		glColor3f (1.0, 1.0, 1.0);
-	
-		LogicLoop();
-
-		//glColor3f (0.0, 0.8, 0.0);
-		//drawCircle((Gx/100+0.5)*NCX,(Gy/100+0.5)*NCY);
-	
-		frame++;
-		timeget=glutGet(GLUT_ELAPSED_TIME);
-		if(timeget-timebase>1000)
-		{
-			fps= (double)frame*1000.0/(double)(timeget-timebase);
-			timebase=timeget;
-			frame=0;
-			//printf("\n%f",fps);
-		}
-
-		glutSwapBuffers();
-		glutPostRedisplay();
+		fps= (double)frame*1000.0/(double)(timeget-timebase);
+		timebase=timeget;
+		frame=0;
+		//printf("\n%f",fps);
 	}
+
+	glutSwapBuffers();
+	glutPostRedisplay();
 }
 
 

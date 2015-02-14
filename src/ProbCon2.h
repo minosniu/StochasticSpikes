@@ -1,7 +1,7 @@
 #ifndef PROBCON_H
 #define PROBCON_H
 
-#define SHOW_POTENTIAL
+//#define SHOW_POTENTIAL
 #define SIMULATION_ONLY
 
 #define MAX_FORCE 1.0
@@ -185,15 +185,29 @@ double randn()
 
 void drawCross(double x, double y)
 {
+	glLineWidth(2.0);
 	glBegin(GL_LINES);
-		glVertex2f(x-0.06*NCX, y);	
-		glVertex2f(x+0.06*NCX, y);	
-		glVertex2f(x, y-0.06*NCX);	
-		glVertex2f(x, y+0.06*NCX);	
+		glVertex2f(x-0.02*NCX, y);	
+		glVertex2f(x+0.02*NCX, y);	
+		glVertex2f(x, y-0.02*NCX);	
+		glVertex2f(x, y+0.02*NCX);	
 	glEnd();
+	glLineWidth(1.0);
 }
 
 	
+void drawEmptyCircle(double x, double y)
+{
+	glLineWidth(2.0);
+	glBegin(GL_LINES);
+		double radius=0.04*NCX;
+		for(double di=0.0; di<=2*GL_PI;di+=GL_PI/8.0)
+		{
+			glVertex2f(x+radius*cos(di), y+radius*sin(di));	
+		}
+	glEnd();
+	glLineWidth(1.0);
+}
 
 void drawCircle(double x, double y)
 {
@@ -510,7 +524,7 @@ void freeAllMem()
 	/* Disable the device. */
 	hdDisableDevice(hHD);
 #endif
-	fprintf(stderr, "\n\nDone 1! :D.\n");     
+	fprintf(stderr, "\n\nProgram End\n");     
 #ifdef USE_CAMERA
 		//cvDestroyWindow("LeftCam");
 		//cvDestroyWindow("BinLeftCam1");
@@ -1098,7 +1112,7 @@ void ProbConLoop_C()
 			if(Vfn_T[j_PCLC][i_PCLC]>0.85)
 			//if(Vfn[i_PCLC][j_PCLC]>0.85)
 			{
-				glColor3f(0.3,0.3,0.3);
+				glColor3f(0.7,0.7,0.0);
 				drawGridPixel((double)i_PCLC,(double)j_PCLC);
 			}
 		}
