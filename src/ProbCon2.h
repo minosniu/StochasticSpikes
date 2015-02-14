@@ -1,7 +1,6 @@
 #ifndef PROBCON_H
 #define PROBCON_H
 
-//#define SHOW_POTENTIAL
 #define SIMULATION_ONLY
 
 #define MAX_FORCE 1.0
@@ -26,6 +25,8 @@ time_t rawtime;
 struct tm * timeinfo;
 
 int mainWindow, subWindow1,subWindow2;
+
+bool modeShowPotential;
 
 /// ROBOT CODE DECLARATIONS
 int kill;
@@ -105,8 +106,6 @@ double ypoints[NCY];  //= linspace(0.0, 1.0, NCX);
 typedef struct rf //can also add rf_center
 {
 	double center;
-	//int ns;
-	//double Vrf[MAX_N];
 	double *Vrf;
 } _RF;
 
@@ -119,9 +118,7 @@ _RF *rfcy[NCY]; //cortex cells
 
 
 double potential[NCX][NCY];  //initial membrane potential is zero
-#ifdef SHOW_POTENTIAL
 double plotpotential[NCX][NCY];  //initial membrane potential is zero
-#endif
 double threshold = 0.8+.1+.3;		 //simple integrate-and-fire neurons
 double max_synapse = 1.0;      //how many spikes needed to raise to threshold is 1/max_synapse
 double sp_state [NCX][NCY];	//binary or double??
@@ -379,85 +376,14 @@ void MtrxProduct(double *pM1,double *pM2,int m,int n,int p,double *pM3)
 
 }
 
-//void MtrxProduct(double *pM1,double *pM2,int m,int n,int p,double *pM3)
-//{		
-//	double *pM2T= (double*)malloc(p*n*sizeof(double));
-//
-//	MtrxTranspose(pM2, n, p, pM2T);
-//
-//	double S;
-//
-//	double *pV1a=NULL;
-//	double *pV2a=NULL;
-//
-//	pV1a = (double*)malloc(n*sizeof(double));
-//	pV2a = (double*)malloc(n*sizeof(double));
-//
-//	for (int i=0; i<=m-1; i=i+1)
-//	{
-//		for (int k=0; k<=p-1; k=k+1)
-//		{
-//			memcpy(pV1a,pM1+i*n,n*sizeof(double));
-//			memcpy(pV2a,pM2T+k*n,n*sizeof(double));
-//			InnerProduct(pV1a,pV2a,n,&S);
-//			*(pM3+i*p+k)=S;
-//		}
-//	}
-//
-//	free(pV1a);
-//	free(pV2a);
-//	free(pM2T);
-//}
-
-//SYSTEMTIME st;
-
 void LogicLoop()
 {
-
 	if(bMatlabLoopOn)
 	{
-		//tim++;
-		//Gx =   global_position[0];
-		//Gy = - global_position[1];
-
-		// Alter the values of diffx
 		ProbConLoop_C();
-		//ProbConLoop_Matlab();
-
-		//printf("\n\nGx = %lf\tGy = %lf\tdifx = %lf  \tdify = %lf", Gx, Gy, cdiffx, cdiffy);
-		//printf("\n\ndifx = %lf  \tdify = %lf \tcdiffx = %lf\tcdiffy = %lf", Gx, Gy, cdiffx, cdiffy);
-
-		//GetSystemTime(&st);
-		
-//		printf ( "\n\nCurrent seconds %u and milliseconds %time and date: %u", st.wSecond, st.wMilliseconds);
-
-
-		//time ( &rawtime );
-		//timeinfo = localtime ( &rawtime );
-		//printf ( "\n\nCurrent local time and date: %s", asctime (timeinfo) );
-
-
-		//ZeroMemory(inforce,sizeof(hduVector3Dd));
-
-
-		//+++ OUTPUT COMMAND!
-		//inforce[0] = scale*cdiffx;
-		//inforce[1] = -scale*cdiffy;
-
 		t = t + 1;
 
 	}
-
-#ifndef SIMULATION_ONLY
-	/* Periodically check if the gravity well callback has exited. */
-	if (!hdWaitForCompletion(hGravityWell, HD_WAIT_CHECK_STATUS))
-	{
-		kill = 1;
-		//fprintf(stderr, "Press any key to quit.\n");     
-		//getch();
-	}
-#endif
-	//glutPostRedisplay();
 }
 
 void init(void)
@@ -470,8 +396,6 @@ void init(void)
 
 void processNormalKeys(unsigned char key, int x, int y)
 {
-
-	//if (key == VK_ESCAPE)
 	if (key == 27)
 	{
 		kill = 1;
@@ -514,45 +438,12 @@ void freeAllMem()
 {
 	freeProbConMem();
 
-#ifndef SIMULATION_ONLY
-
-	/* For cleanup, unschedule callback and stop the scheduler. */
-	hdStopScheduler();
-	hdUnschedule(hGravityWell);
-	
-
-	/* Disable the device. */
-	hdDisableDevice(hHD);
-#endif
 	fprintf(stderr, "\n\nProgram End\n");     
-#ifdef USE_CAMERA
-		//cvDestroyWindow("LeftCam");
-		//cvDestroyWindow("BinLeftCam1");
-		//cvDestroyWindow("BinLeftCam2");
-		cvReleaseCapture(&leftCapture);
-		cvReleaseImage(&binLeftImgGreen);
-		cvReleaseImage(&binLeftImgCyan);
-		cvReleaseImage(&binLeftImgSmallGreen);
-		cvReleaseImage(&binLeftImgSmallCyan);
-
-		//cvDestroyWindow("RightCam");
-		//cvDestroyWindow("BinRightCam1");
-		//cvDestroyWindow("BinRightCam2");
-	/*	cvReleaseCapture(&rightCapture);
-		cvReleaseImage(&binRightImgGreen);
-		cvReleaseImage(&binRightImgCyan);
-		cvReleaseImage(&binRightImgSmallGreen);
-		cvReleaseImage(&binRightImgSmallCyan);*/
-
-#endif
 }
 
 
 int InitProbCon()   
 {
-	//MCInit();
-
-
 	int i_IPC,j_IPC;
 	//INIT
 	for(i_IPC=0;i_IPC<NSX;i_IPC++)
@@ -708,9 +599,6 @@ int InitProbCon()
 	}
 
 	//+++ Clear mem
-
-	//ZeroMemory(sp_state[0],NCX*NCY*sizeof(double)); 
-
 	xglob = 0.5;
 	yglob = 0.5;
 
@@ -817,7 +705,6 @@ void ProbConLoop_C()
 {
 	int i_PCLC,j_PCLC;
 	
-#ifndef USE_CAMERA
 	//Vfny = 20*cos(.007*6.28*t);
 	//Vfny = 0.0;
 	Vfny = 8*cos(.007*6.28*t*1.0);
@@ -828,25 +715,14 @@ void ProbConLoop_C()
 	Vfnx = 0;//20*sin(.005*6.28*t);
 	Vfny = 0;//20*cos(.003*6.28*t);
 	MtrxShift(Cfn0[0], NCX, NCY, round(Vfnx), round(Vfny), Cfn[0]);
-#else 
-	memcpy(Vfn,VfnCam,NCX*NCY*sizeof(double));
-	memcpy(Cfn,CfnCam,NCX*NCY*sizeof(double));
-#endif
 
 	//REDEFINE CFN from the cblob values
-
-
-
-#ifdef SIMULATION_ONLY
 	//x = x+beta*(randn(1)/4+sp2(t)-sp1(t));%0.5+(cos(4*6.28*t/(double)MAX_T)/4);%5
 	//y = y+beta*(randn(1)/4+sp4(t)-sp3(t));%0.5+(cos(2*6.28*t/(double)MAX_T)/4);
 
 	xglob = xglob+beta*(randn()/8+3*cdiffx);//(sp2-sp1));
 	yglob = yglob+beta*(randn()/8+3*cdiffy);//(sp4-sp3));
-#else
-	xglob=Gx/100+.5;
-	yglob=Gy/100+.5;
-#endif
+
 	ScalarProd(sp_state[0], NCX, NCY, max_synapse, dpotential[0]);
 	MtrxSum(potential[0], dpotential[0], NCX, NCY, potential[0]);
 	ScalarProd(potential[0], NCX, NCY, 0.95, potential[0]); //decay
@@ -855,13 +731,9 @@ void ProbConLoop_C()
 	ind[0]=floor(NCX*(xglob-min_x)); 
 	ind[1]=floor(NCY*(yglob-min_y));
 
-	//dx=sign(floor(NCX * (x-min_x))-ix)/3;
-	//dy=sign(floor(NCY * (y-min_y))-iy)/3;
-
 	ix = floor(NCX * (xglob-min_x));     //index for current value of x
 	iy = floor(NCY * (yglob-min_y));     //index for current value of y
 
-	//printf("\n\t%lf.2",t);
 	//<WARNING SUPER SLOW
 
 	for (i_PCLC = 0; i_PCLC < NSX; i_PCLC++) 
@@ -891,17 +763,16 @@ void ProbConLoop_C()
 		}
 	}
 
-#ifdef SHOW_POTENTIAL
-	for (i_PCLC = 0; i_PCLC < NCX; i_PCLC++) 
-	{
-		for (j_PCLC = 0; j_PCLC < NCY; j_PCLC = j_PCLC + 1)
+	if (modeShowPotential) { 
+		for (i_PCLC = 0; i_PCLC < NCX; i_PCLC++) 
 		{
-			plotpotential[i_PCLC][j_PCLC] = potential[i_PCLC][j_PCLC];
-		}
-	} 
-	ScalarProd(plotpotential[0],NCX,NCY,10.0,plotpotential[0]);
-#endif
-	//printf("\n\t%lf.3",t);
+			for (j_PCLC = 0; j_PCLC < NCY; j_PCLC = j_PCLC + 1)
+			{
+				plotpotential[i_PCLC][j_PCLC] = potential[i_PCLC][j_PCLC];
+			}
+		} 
+		ScalarProd(plotpotential[0],NCX,NCY,10.0,plotpotential[0]);
+	}
 
 	for (i_PCLC = 0; i_PCLC < NCX; i_PCLC++) 
 	{
@@ -951,8 +822,6 @@ void ProbConLoop_C()
 	num_spike=num_spike==0 ? 1 :  num_spike;
 	estimated_pos[0]=sum_est_pos[0]/(NCX*(double)num_spike);
 	estimated_pos[1]=sum_est_pos[1]/(NCY*(double)num_spike);
-
-	//printf("\n%d", num_spike);
 
 	//motor cortex
 	for (i_PCLC = 0; i_PCLC < NCX; i_PCLC++) 
@@ -1063,15 +932,12 @@ void ProbConLoop_C()
 		}
 	}
 	pot3 = pot3+.1+sum3/25;
-	//pot3=pot3+.1+sum(sum(L1(spy2_ctx>0)))/100-sum(sum(L1(spy2Neg_ctx>0)))/100;
 	sp3 = (((double)(rand()%1000)/1000.0)<pot3);
 	if (sp3>0)
 	{
 		pot3 = 0;
 	}
 	pot3 = pot3*.9;
-	//
-	//printf("\n\t%lf.9",t);
 
 	sum4 = 0;
 	for (i_PCLC = 0; i_PCLC < NCX; i_PCLC++) 
@@ -1132,20 +998,21 @@ void ProbConLoop_C()
 		}
 	}
 
-#ifdef SHOW_POTENTIAL
-	for(i_PCLC=0;i_PCLC<NCX;i_PCLC++)
-	{
-		for(j_PCLC=0;j_PCLC<NCY;j_PCLC++)
+	if (modeShowPotential) {
+		for(i_PCLC=0;i_PCLC<NCX;i_PCLC++)
 		{
-			//if(plotpotential[i_PCLC][j_PCLC])
+			for(j_PCLC=0;j_PCLC<NCY;j_PCLC++)
 			{
-				glColor3f(plotpotential[i_PCLC][j_PCLC]/1.0,plotpotential[i_PCLC][j_PCLC]/1.0,plotpotential[i_PCLC][j_PCLC]/1.0);
-				//glColor3f(1.0,1.0,1.0);
-				drawLoop((double)i_PCLC,(double)j_PCLC);
+				//if(plotpotential[i_PCLC][j_PCLC])
+				{
+					glColor3f(plotpotential[i_PCLC][j_PCLC]/1.0,plotpotential[i_PCLC][j_PCLC]/1.0,plotpotential[i_PCLC][j_PCLC]/1.0);
+					//glColor3f(1.0,1.0,1.0);
+					drawLoop((double)i_PCLC,(double)j_PCLC);
+				}
 			}
 		}
 	}
-#endif
+
 	for(i_PCLC=0;i_PCLC<NCX;i_PCLC++)
 	{
 		for(j_PCLC=0;j_PCLC<NCY;j_PCLC++)
@@ -1163,17 +1030,11 @@ void ProbConLoop_C()
 	//drawCircle(25,75);
 	drawCircle(xglob*NCX,yglob*NCY);
 
-
-
-	//printf("\n\t\tnum_spike = %d",num_spike);
-	//printf("\n\t\tepx=%lf\tepy=%lf",estimated_pos[0],estimated_pos[1]);
 	glColor3f(0.1,0.8,0.8);
 	drawCross(estimated_pos[0]*NCX,estimated_pos[1]*NCY);
 
 	difx = sp2-sp1;
 	dify = sp4-sp3;		
-
-	//C
 
 	difMeanX=0.0;
 	difMeanY=0.0;
@@ -1197,9 +1058,6 @@ void ProbConLoop_C()
 	difMeanX/=FILT_DIF;
 	difMeanY/=FILT_DIF;
 
-	//cdiffx=difx;
-	//cdiffy=dify;
-
 	cdiffx=difMeanX;
 	cdiffy=difMeanY;
 
@@ -1208,14 +1066,6 @@ void ProbConLoop_C()
 		//DataValue[0] = xglob * 3.3f;
 	}
 	//DataValue[1] = 3.3f;
-	//
-	////if(DataValue[0] > 0.01f && DataValue[0] < 3.3f)
-	////{
-	//	ULStat = cbVOut (BoardNum, 0, Gain, DataValue[0], Options);
-	//}
-
-	//ULStat = cbVOut (BoardNum, 1, Gain, DataValue[1], Options);
-
 }
 
 #endif
