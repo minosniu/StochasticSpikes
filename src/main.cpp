@@ -10,11 +10,13 @@
 #include <time.h>
 #include <string.h>
 
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-
-#include <GLUT/glut.h>
-#pragma comment(lib, "glut32.lib")
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glut.h>
+//#include <OpenGL/gl.h>
+//#include <OpenGL/glu.h>
+//#include <GLUT/glut.h>
+//#pragma comment(lib, "glut32.lib")
 
 #include <iostream>
 
